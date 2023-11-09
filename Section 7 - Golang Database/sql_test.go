@@ -123,3 +123,53 @@ func TestSqlInjection(t *testing.T) {
 		fmt.Println("Gagal Login")
 	}
 }
+
+func TestSqlInjectionsafe(t *testing.T) {
+	db := GetConnection()
+	defer db.Close()
+
+	ctx := context.Background()
+
+	//sql injection berbahaya jika membuat sql gabungan secara manual
+	//lalu lambang # pada c++ adalah komentar, jadi dibawah adalah salah  karena dengan adanya # kodenya akan menjadi komentar dan mengabaikan kesalahannya lalu login dianggap berhasil
+	//solusinya adalah membuat sql dengan parameter atau menggunakan tanda tanya ?
+	username := "admin"
+	password := "admin"
+
+	script := "SELECT username FROM user WHERE username = ? AND password = ? LIMIT 1"
+	//fmt.Println(script)
+	rows, err := db.QueryContext(ctx, script, username, password)
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		var username string
+		err := rows.Scan(&username)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Sukses Login", username)
+	} else {
+		fmt.Println("Gagal Login")
+	}
+}
+
+func TestExecSqlParameter(t *testing.T) {
+	db := GetConnection()
+	defer db.Close()
+
+	ctx := context.Background()
+
+	username := "aji"
+	password := "aji"
+
+	script := "INSERT INTO customer(username, password) VALUES(?, ?)"
+	_, err := db.ExecContext(ctx, script, username, password)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Success insert new customer")
+}
