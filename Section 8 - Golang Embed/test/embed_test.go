@@ -1,4 +1,4 @@
-package Section_8___Golang_Embed
+package test
 
 import (
 	"embed"
@@ -9,14 +9,14 @@ import (
 	"testing"
 )
 
-//go:embed version.txt
+//go:embed ../files/version.txt
 var version string
 
 func TestString(t *testing.T) {
 	fmt.Println(version)
 }
 
-//go:embed logo.png
+//go:embed ../files/logo.png
 var logo []byte
 
 func TestByte(t *testing.T) {
@@ -26,14 +26,14 @@ func TestByte(t *testing.T) {
 	}
 }
 
-//go:embed files/a.txt
+//go:embed ../files/a.txt
 //go:embed files/b.txt
 //go:embed files/c.txt
 //go:embed files/d.txt
 var files embed.FS
 
 func TestMultipleFiles(t *testing.T) {
-	a, _ := files.ReadFile("files/a.txt")
+	a, _ := files.ReadFile("../files/a.txt")
 	fmt.Println(string(a))
 
 	b, _ := files.ReadFile("files/b.txt")
